@@ -1,4 +1,4 @@
-openweatherwrap
+OpenWeatherWrap
 ===============
 
 OpenWeatherMap API wrapper
