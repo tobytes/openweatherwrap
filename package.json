@@ -1,0 +1,23 @@
+{
+  "name": "openweatherwrap",
+  "description": "OpenWeatherMap API wrapper",
+  "version": "0.0.1",
+  "main": "./main",
+  "dependencies": {
+    "request": "2.x.x"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tobytes/openweatherwrap.git"
+  },
+  "keywords": [
+    "OpenWeatherMap",
+    "weather",
+    "wrapper"
+  ],
+  "author": "Tobias Reinwarth",
+}
