@@ -1,0 +1,4 @@
+{
+    "baseUrl": "http://www.openweathermap.org/data/",
+    "apiVersion": "2.1"
+}

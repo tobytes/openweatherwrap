@@ -1,9 +1,9 @@
+var path = require('path');
+var nconf = require('nconf');
 var request = require('request');
 
-// base url for requests
-var baseUrl = 'http://www.openweathermap.org/data/';
-// OpenWeatherMap API version
-var apiVersion = '2.1';
+// config order
+nconf.argv().env().file({file: path.join(__dirname,'config.json')});
 
 // find
 
@@ -15,7 +15,7 @@ var apiVersion = '2.1';
  * @return void
  */
 exports.findStationsNearPoint = function (parameters, callback) {
-    var url = buildUrl('find/station/', parameters);
+    var url = exports.buildUrl('find/station/', parameters);
     console.log(url);
     queryData(url, callback);
 }
@@ -31,7 +31,7 @@ exports.findStationsNearPoint = function (parameters, callback) {
  * @return void
  */
 exports.getCurrentWeatherByCityId = function (parameters, callback) {
-    var url = buildUrl('weather/city/', parameters);
+    var url = exports.buildUrl('weather/city/', parameters);
     console.log(url);
     queryData(url, callback);
 }
@@ -47,8 +47,8 @@ exports.getCurrentWeatherByCityId = function (parameters, callback) {
  * @param {array} parameters for the request 
  * @return {string} the concatenated url string
  */
-function buildUrl(path, parameters) {
-    return baseUrl + apiVersion + '/' + path + '?' + encodeParameters(parameters);
+exports.buildUrl =  function (path, parameters) {
+    return nconf.get('baseUrl') + nconf.get('apiVersion') + '/' + path + '?' + encodeParameters(parameters);
 }
 
 /**
