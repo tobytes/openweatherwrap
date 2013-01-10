@@ -5,8 +5,6 @@ var request = require('request');
 // config order
 nconf.argv().env().file({file: path.join(__dirname,'config.json')});
 
-// find
-
 /**
  * Find weather stations near a point 
  *
@@ -19,8 +17,6 @@ exports.findStationsNearPoint = function (parameters, callback) {
     console.log(url);
     queryData(url, callback);
 }
-
-// weather
 
 /**
  * Queries current weather in a city defined
@@ -35,10 +31,6 @@ exports.getCurrentWeatherByCityId = function (parameters, callback) {
     console.log(url);
     queryData(url, callback);
 }
-// forcast
-// weather station
-// history station
-
 
 /**
  * Concatenates baseUrl, path and parameters to an url
