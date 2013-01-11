@@ -13,8 +13,12 @@ nconf.argv().env().file({file: path.join(__dirname,'config.json')});
  * @return void
  */
 exports.findStationsNearPoint = function (parameters, callback) {
-    var url = exports.buildUrl('find/station/', parameters);
-    console.log(url);
+    var pattern = '{0}{1}/find/station?{2}';
+    var url = pattern.format(
+        nconf.get('baseUrl'), 
+        nconf.get('apiVersion'), 
+        buildUrlParameters(parameters));
+
     queryData(url, callback);
 }
 
@@ -22,42 +26,49 @@ exports.findStationsNearPoint = function (parameters, callback) {
  * Queries current weather in a city defined
  * by the id
  *
+ * @param {string} cityId
  * @param {array} parameters
  * @param {function} callback
  * @return void
  */
-exports.getCurrentWeatherByCityId = function (parameters, callback) {
-    var url = exports.buildUrl('weather/city/', parameters);
-    console.log(url);
+exports.getCurrentWeatherByCityId = function (cityId, parameters, callback) {
+    var pattern = '{0}{1}/weather/city/{2}?{3}';
+    var url = pattern.format(
+        nconf.get('baseUrl'), 
+        nconf.get('apiVersion'), 
+        encodeURIComponent(cityId), 
+        buildUrlParameters(parameters));
+
     queryData(url, callback);
 }
 
 /**
- * Concatenates baseUrl, path and parameters to an url
- *
- * @param {string} path for the request
- * @param {array} parameters for the request 
- * @return {string} the concatenated url string
+ * Replaces placeholder in an string
+ * with given arguments
  */
-exports.buildUrl =  function (path, parameters) {
-    return nconf.get('baseUrl') + nconf.get('apiVersion') + '/' + path + '?' + encodeParameters(parameters);
-}
+String.prototype.format = function() {
+  var args = arguments;
+  return this.replace(/{(\d+)}/g, function(match, number) { 
+    return typeof args[number] != 'undefined'
+      ? args[number]
+      : match
+    ;
+  });
+};
 
 /**
- * Encodes and concatenates the given parameters  
+ * Encodes and concatenates array
+ * to a GET-String
  *
  * @param {array} parameters for the request
- * @return {string} concatenated and encoded parameters 
+ * @return {string} GET-String  
  */
-function encodeParameters(parameters) {
+var buildUrlParameters = function(parameters) {
     return Object.keys(parameters).map(function(key) {
-        if (!isNaN(parseInt(key))) {
-            return encodeURIComponent(parameters[key]) + '/';
-        } else {
-            return [key, parameters[key]].map(encodeURIComponent).join("=");
-        }
+        return [key, parameters[key]].map(encodeURIComponent).join("=");
     }).join("&");
 }
+exports.buildUrlParameters = buildUrlParameters;
 
 /**
  * Queries the given url and return
@@ -67,10 +78,16 @@ function encodeParameters(parameters) {
  * @param {function} callback 
  * @return void
  */
-function queryData(url, callback) {
+var queryData = function queryData(url, callback) {
     request(url, function (error, response, body) {
         if(!error && response.statusCode == 200) {
-            callback(JSON.parse(body));
+            if (typeof(callback) == 'function') {
+                callback(JSON.parse(body));
+            }
+        } else {
+            throw new Error('Request nicht erfolgreich');
+            //console.log(error);
         }
     })
 }
+exports.queryData = queryData;
