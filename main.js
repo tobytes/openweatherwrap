@@ -13,11 +13,8 @@ nconf.argv().env().file({file: path.join(__dirname,'config.json')});
  * @return void
  */
 exports.findStationsNearPoint = function (parameters, callback) {
-    var pattern = '{0}{1}/find/station?{2}';
-    var url = pattern.format(
-        nconf.get('baseUrl'), 
-        nconf.get('apiVersion'), 
-        buildUrlParameters(parameters));
+    var pattern = '{0}{1}/find/station?{2}',
+        url = buildUrl(pattern, parameters);
 
     queryData(url, callback);
 }
@@ -33,17 +30,33 @@ exports.findStationsNearPoint = function (parameters, callback) {
  */
 exports.getCurrentWeatherByCityId = function (cityId, parameters, callback) {
     var pattern = '{0}{1}/weather/city/{2}?{3}';
-    var url = pattern.format(
-        nconf.get('baseUrl'), 
-        nconf.get('apiVersion'), 
-        encodeURIComponent(cityId), 
-        buildUrlParameters(parameters));
+        url = buildUrl(pattern, cityId, parameters);
 
     queryData(url, callback);
 }
 
 /**
- * Replaces placeholder in an string
+ * Build url from pattern
+ * with parameters
+ */
+var buildUrl = function() {
+    var args = arguments,
+        pattern = args[0];
+
+    // collect all parameters
+    paramsArray= [
+        nconf.get('baseUrl'),
+        nconf.get('apiVersion')
+    ].concat(
+        [].slice.call(args).slice(1, -1).map(encodeURIComponent),
+        [buildParameterString(args[args.length - 1])]
+    )
+
+    return pattern.format.apply(pattern, paramsArray);
+}
+
+/**
+ * Replaces placeholder in pattern 
  * with given arguments
  */
 String.prototype.format = function() {
@@ -63,12 +76,12 @@ String.prototype.format = function() {
  * @param {array} parameters for the request
  * @return {string} GET-String  
  */
-var buildUrlParameters = function(parameters) {
+var buildParameterString = function(parameters) {
     return Object.keys(parameters).map(function(key) {
         return [key, parameters[key]].map(encodeURIComponent).join("=");
     }).join("&");
 }
-exports.buildUrlParameters = buildUrlParameters;
+exports.buildParameterString = buildParameterString;
 
 /**
  * Queries the given url and return
@@ -86,7 +99,6 @@ var queryData = function queryData(url, callback) {
             }
         } else {
             throw new Error('Request nicht erfolgreich');
-            //console.log(error);
         }
     })
 }
