@@ -16,19 +16,23 @@ exports['buildUrlParameters'] = function (test) {
 }
 
 exports['queryData'] = function (test) {
-    var correctUrl = 'http://openweathermap.org/data/2.1/weather/city/524901'; 
-    var wrongUrl = 'http://openweathermap.org/data/2.1/wther/city/524901'; 
+    var pattern = '{0}{1}/weather/city/{2}?{3}';
+        correctUrl = buildUrl(pattern, '524901', {}),
+        urlErrorSyntax = 'http;//www.google.de',
+        urlErrorNotJson = 'http://www.google.de';
 
     openweatherwrap.queryData(correctUrl, function(response) {
         test.ok(response !== undefined); 
     });
 
-    test.throws(
-        function() {
-            openweatherwrap.queryData(wrongUrl)
-        },
-        Error
-    );
+    openweatherwrap.queryData(urlErrorSyntax, function(response) {
+        test.equals(nconf.get('errors:requestFailed', response.message));
+    });
+
+    openweatherwrap.queryData(urlErrorNotJson, function(response) {
+        test.equals(nconf.get('errors:notJson', response.message));
+    });
+
     test.done();
 
 }

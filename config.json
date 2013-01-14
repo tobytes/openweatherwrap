@@ -1,4 +1,8 @@
 {
     "baseUrl": "http://www.openweathermap.org/data/",
-    "apiVersion": "2.1"
+    "apiVersion": "2.1",
+    "errors": {
+        "notJson": "Response is not json.",
+        "requestFailed": "Request failed."
+    } 
 }

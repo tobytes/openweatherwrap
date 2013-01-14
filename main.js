@@ -32,7 +32,8 @@ exports.getCurrentWeatherByCityId = function (cityId, parameters, callback) {
     var pattern = '{0}{1}/weather/city/{2}?{3}';
         url = buildUrl(pattern, cityId, parameters);
 
-    queryData(url, callback);
+    queryData('http:.///www.golem.de/', callback);
+    //queryData(url, callback);
 }
 
 /**
@@ -54,6 +55,7 @@ var buildUrl = function() {
 
     return pattern.format.apply(pattern, paramsArray);
 }
+exports.buildUrl = buildUrl;
 
 /**
  * Replaces placeholder in pattern 
@@ -94,11 +96,14 @@ exports.buildParameterString = buildParameterString;
 var queryData = function queryData(url, callback) {
     request(url, function (error, response, body) {
         if(!error && response.statusCode == 200) {
-            if (typeof(callback) == 'function') {
-                callback(JSON.parse(body));
+            try {
+                response = JSON.parse(body);
+                callback(null, response);
+            } catch (e) {
+                callback(new Error(nconf.get('errors:notJson')));
             }
         } else {
-            throw new Error('Request nicht erfolgreich');
+            callback(new Error(nconf.get('errors:requestFailed')));
         }
     })
 }
