@@ -8,3 +8,16 @@ nconf.argv().env().file({
 });
 
 
+exports['findStationNearPoint'] = function (test) {
+    openweatherwrap.findStationsNearPoint({'lat':55, 'lon':73, 'cnt':10}, function(error, response) {
+        test.ok((response !== false));
+        test.done();
+    });
+}
+
+exports['getCurrentWeatherByCityId'] = function (test) {
+    openweatherwrap.getCurrentWeatherByCityId('2935022', {'lan':'de'},  function(error, response) {
+        test.ok((response !== false));
+        test.done();
+    });
+}

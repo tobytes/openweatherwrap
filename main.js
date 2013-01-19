@@ -32,8 +32,7 @@ exports.getCurrentWeatherByCityId = function (cityId, parameters, callback) {
     var pattern = '{0}{1}/weather/city/{2}?{3}';
         url = buildUrl(pattern, cityId, parameters);
 
-    queryData('http:.///www.golem.de/', callback);
-    //queryData(url, callback);
+    queryData(url, callback);
 }
 
 /**
