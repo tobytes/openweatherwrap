@@ -20,5 +20,7 @@
     "weather",
     "wrapper"
   ],
-  "author": "Tobias Reinwarth"
+  "author": "Tobias Reinwarth",
+  "license": "MIT"
+      
 }
