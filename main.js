@@ -6,16 +6,43 @@ var request = require('request');
 nconf.argv().env().file({file: path.join(__dirname,'config.json')});
 
 /**
- * Find weather stations near a point 
+ * Find weather stations 
  *
  * @param {array} parameters
  * @param {function} callback
  * @return void
  */
-exports.findStationsNearPoint = function (parameters, callback) {
+exports.findWeatherInStations = function (parameters, callback) {
     var pattern = '{0}{1}/find/station?{2}',
         url = buildUrl(pattern, parameters);
 
+    queryData(url, callback);
+}
+
+/**
+ * Find weather in cities
+ *
+ * @param {array} parameters
+ * @param {function} callback
+ * @return void
+ */
+exports.findWeatherInCities = function (parameters, callback) {
+    var pattern = '{0}{1}/find/city/?{2}',
+        url = buildUrl(pattern, parameters);
+    queryData(url, callback);
+}
+
+/**
+ * Find weather in cities
+ * by a given name
+ *
+ * @param {array} parameters
+ * @param {function} callback
+ * @return void
+ */
+exports.findWeatherInCitiesByName = function (parameters, callback) {
+    var pattern = '{0}{1}/find/name/?{2}',
+        url = buildUrl(pattern, parameters);
     queryData(url, callback);
 }
 
@@ -36,6 +63,38 @@ exports.getCurrentWeatherByCityId = function (cityId, parameters, callback) {
 }
 
 /**
+ * Queries Forcast for city defined
+ * by the city id
+ *
+ * @param {string} cityId
+ * @param {array} parameters
+ * @param {function} callback
+ * @return void
+ */
+exports.getForecastByCityId = function (cityId, parameters, callback) {
+    var pattern = '{0}{1}/forecast/city/{2}?{3}';
+        url = buildUrl(pattern, cityId, parameters);
+
+    queryData(url, callback);
+}
+
+/**
+ * Queries forecast for city by
+ * name
+ * 
+ * @param {array} parameters
+ * @param {function} callback
+ * @return void
+ */
+exports.getForecastByCityName = function (parameters, callback) {
+    var pattern = '{0}{1}/forecast/city/?{2}';
+        url = buildUrl(pattern, parameters);
+
+    queryData(url, callback);
+}
+
+
+/**
  * Build url from pattern
  * with parameters
  */
@@ -43,7 +102,10 @@ var buildUrl = function() {
     var args = arguments,
         pattern = args[0];
 
-    // collect all parameters
+    // concats all parameter in an array
+    // first: static parameters from config
+    // second: dynamic paramters that are not part of the GET-String
+    // third: GET-String parameters 
     paramsArray= [
         nconf.get('baseUrl'),
         nconf.get('apiVersion')
